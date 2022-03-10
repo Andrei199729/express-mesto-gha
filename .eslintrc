@@ -1,14 +1,4 @@
 {
   "extends": "airbnb-base",
-  "allowFunctionParams": true,
-  "rules": {
-    "no-underscore-dangle": [
-      "error",
-      {
-        "allow": [
-          "_id"
-        ]
-      }
-    ]
-  }
+  "allowFunctionParams": true
 }
