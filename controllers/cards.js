@@ -2,7 +2,7 @@ const ErrorNotFound = require('../errors/ErrorNotFound');
 const ValidationError = require('../errors/ValidationError');
 const ErrorDefault = require('../errors/ErrorDefault');
 const Cards = require('../models/card');
-const errorMessageValid = new ValidationError('Ошибка валидации');
+const errorMessageValid = new ValidationError('переданы некорректные данные');
 const errorMessageNotFound = new ErrorNotFound('Карточка не найдена');
 const errorMessageDefault = new ErrorDefault('Ошибка по-умолчанию');
 
@@ -35,13 +35,16 @@ module.exports.likeCard = (req, res) => {
       throw new ErrorNotFound('Карточка не найдена')
     })
     .then(card => res.status(200).send({ data: card }))
-    .catch(err => {
+    .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: errorMessageNotFound });
-      } else {
-        return res.status(500).send({ message: errorMessageDefault });
+        return res.status(400).send({ message: errorMessageValid })
+      } else if (err.statusCode === 404) {
+        return res.status(404).send({ message: err.errorMessage })
       }
-    });
+      else {
+        return res.status(500).send({ message: errorMessageDefault })
+      }
+    })
 }
 
 module.exports.dislikeCard = (req, res) => {
@@ -53,13 +56,16 @@ module.exports.dislikeCard = (req, res) => {
       throw new ErrorNotFound('Карточка не найдена')
     })
     .then(card => res.status(200).send({ data: card }))
-    .catch(err => {
+    .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: errorMessageNotFound })
-      } else {
-        return res.status(500).send({ message: errorMessageDefault });
+        return res.status(400).send({ message: errorMessageValid })
+      } else if (err.statusCode === 404) {
+        return res.status(404).send({ message: err.errorMessage })
       }
-    });
+      else {
+        return res.status(500).send({ message: errorMessageDefault })
+      }
+    })
 }
 
 module.exports.deleteCard = (req, res) => {
