@@ -53,7 +53,7 @@ module.exports.updateUserInfo = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(404).send({ message: err.errorMessage })
       } else if (err.statusCode === 400) {
-        return res.status(404).send({ message: 'Переданы некорректные данные' })
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
       }
       else {
         return res.status(500).send({ message: 'Ошибка по-умолчанию' })

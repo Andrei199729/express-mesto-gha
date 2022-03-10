@@ -36,7 +36,7 @@ module.exports.likeCard = (req, res) => {
     })
     .then(card => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' })
       } else if (err.statusCode === 404) {
         return res.status(404).send({ message: err.errorMessage })
