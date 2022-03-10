@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '622458d61f7bc162137cd177' //   _id созданного пользователя
+    _id: '622458d61f7bc162137cd177', //   _id созданного пользователя
   };
 
   next();
@@ -30,6 +30,4 @@ app.use('/cards', require('./routes/cards'));
 app.use(routerErrorWay);
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.listen(PORT, () => {
-  console.log(`Works on ${PORT}`);
-});
+app.listen(PORT);
