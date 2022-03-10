@@ -50,9 +50,9 @@ module.exports.updateUserInfo = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.statusCode === 400 || err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' })
-      } else if (err.statusCode === 404) {
+      } else if (err.statusCode === 404 || err.name === 'CastError') {
         return res.status(404).send({ message: err.errorMessage })
       }
       else {
