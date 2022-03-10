@@ -9,7 +9,7 @@ const errorMessageDefault = new ErrorDefault('Ошибка по-умолчани
 module.exports.getUser = (req, res) => {
   Users.find({})
     .then(users => res.send({ data: users }))
-    .catch(err => res.status(500).send({ message: errorMessageDefault }));
+    .catch(err => res.status(500).send({ message: 'Ошибка по-умолчанию' }));
 };
 
 module.exports.getUserId = (req, res) => {
@@ -19,11 +19,13 @@ module.exports.getUserId = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return res.status(404).send({ message: errorMessageNotFound })
+      if (err.name === 'CastError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
+      } else if (err.statusCode === 404) {
+        return res.status(404).send({ message: err.errorMessage })
       }
       else {
-        return res.status(500).send({ message: errorMessageDefault })
+        return res.status(500).send({ message: 'Ошибка по-умолчанию' })
       }
     })
 };
@@ -33,9 +35,9 @@ module.exports.createUser = (req, res) => {
     .then(user => res.status(200).send({ data: user }))
     .catch(err => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: errorMessageValid })
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
       } else {
-        return res.status(500).send({ message: errorMessageDefault })
+        return res.status(500).send({ message: 'Ошибка по-умолчанию' })
       }
     });
 };
@@ -49,12 +51,12 @@ module.exports.updateUserInfo = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: errorMessageValid })
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
       } else if (err.statusCode === 404) {
         return res.status(404).send({ message: err.errorMessage })
       }
       else {
-        return res.status(500).send({ message: errorMessageDefault })
+        return res.status(500).send({ message: 'Ошибка по-умолчанию' })
       }
     })
 };
@@ -69,12 +71,12 @@ module.exports.updateAvatar = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: errorMessageValid })
+        return res.status(400).send({ message: 'Переданы некорректные данные' })
       } else if (err.statusCode === 404) {
         return res.status(404).send({ message: err.errorMessage })
       }
       else {
-        return res.status(500).send({ message: errorMessageDefault })
+        return res.status(500).send({ message: 'Ошибка по-умолчанию' })
       }
     })
 };
