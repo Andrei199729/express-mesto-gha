@@ -49,10 +49,10 @@ module.exports.updateUserInfo = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.statusCode === 400 || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
-      if (err.statusCode === 404 || err.name === 'CastError') {
+      if (err.statusCode === 404) {
         return res.status(404).send({ message: err.errorMessage });
       }
       return res.status(500).send({ message: 'Ошибка по-умолчанию' });
@@ -67,7 +67,7 @@ module.exports.updateAvatar = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
       if (err.statusCode === 404) {

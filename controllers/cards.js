@@ -53,10 +53,10 @@ module.exports.dislikeCard = (req, res) => {
     })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.statusCode === 400 || err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         return res.status(400).send({ message: 'Переданы некорректные данные' });
       }
-      if (err.statusCode === 404 || err.name === 'CastError') {
+      if (err.statusCode === 404) {
         return res.status(404).send({ message: 'Карточка не найдена' });
       }
       return res.status(500).send({ message: 'Ошибка по-умолчанию' });
