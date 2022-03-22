@@ -1,7 +1,12 @@
 const express = require('express');
+const { errors } = require('celebrate');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routerErrorWay = require('./routes/errorsway');
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
+const errorHandler = require('./middlewares/errorHandler');
+
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
@@ -9,17 +14,21 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '622458d61f7bc162137cd177', //   _id созданного пользователя
-  };
+app.post('/signup', createUser);
+app.post('/signin', login);
 
-  next();
-});
 // подключаемся к серверу mongo
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
+
+app.use('/cards', require('./routes/cards'));
+
+app.use(auth);
+
+app.use(errors());
+
+app.use(errorHandler);
 
 app.use(routerErrorWay);
 
