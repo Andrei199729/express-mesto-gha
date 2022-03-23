@@ -159,7 +159,6 @@ module.exports.login = (req, res, next) => {
         throw new Unauthorized('Не правильный логин или пароль');
       }
       const token = jwt.sign({ email }, 'some-secret-key', { expiresIn: '7d' });
-      // вернём токен
       res.send({ jwt: token });
     })
     .catch((err) => {
