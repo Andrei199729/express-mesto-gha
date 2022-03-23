@@ -4,7 +4,7 @@ const Cards = require('../models/card');
 
 module.exports.getCard = (req, res, next) => {
   Cards.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.status(200).send({ data: cards }))
     .catch((err) => next(err));
 };
 
@@ -14,7 +14,7 @@ module.exports.createCard = (req, res, next) => {
   Cards.create({ name, link, owner: ownerId })
     .then((card) => {
       if (!card) {
-        throw new ValidationError('Переданы некорректные данные');
+        next(new ValidationError('Переданы некорректные данные'));
       }
       res.status(200).send({ data: card });
     })
@@ -37,7 +37,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .then((card) => {
       if (!card) {
-        throw new ErrorNotFound('Карточка не найдена');
+        next(new ErrorNotFound('Карточка не найдена'));
       }
       res.status(200).send({ data: card });
     })
@@ -59,7 +59,7 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .then((card) => {
       if (!card) {
-        throw new ErrorNotFound('Карточка не найдена');
+        next(new ErrorNotFound('Карточка не найдена'));
       }
       res.status(200).send({ data: card });
     })
@@ -81,7 +81,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (!card) {
-        throw new ErrorNotFound('Карточка не найдена');
+        next(new ErrorNotFound('Карточка не найдена'));
       }
       res.status(200).send({ data: card });
     })

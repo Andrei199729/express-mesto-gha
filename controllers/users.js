@@ -18,7 +18,7 @@ module.exports.getUserId = (req, res, next) => {
     })
     .then((user) => {
       if (!user) {
-        throw new ErrorNotFound('Пользователь не найден');
+        next(new ErrorNotFound('Пользователь не найден'));
       }
       res.status(200).send({ data: user });
     })
@@ -51,7 +51,7 @@ module.exports.getUserMe = (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        throw new ErrorNotFound('Пользователь не найден');
+        next(new ErrorNotFound('Пользователь не найден'));
       }
       res.status(200).send({ data: user });
     })
@@ -75,7 +75,7 @@ module.exports.createUser = (req, res, next) => {
   Users.findOne({ email })
     .then((user) => {
       if (user) {
-        throw new ErrorConflict(`Пользователь с таким email ${email} уже зарегистрирован`);
+        next(new ErrorConflict(`Пользователь с таким email ${email} уже зарегистрирован`));
       }
       return bcrypt.hash(password, 10);
     })
@@ -88,7 +88,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => Users.findOne({ _id: user._id })) // прячет пароль
     .then((user) => {
-      res.status(200).send({ user });
+      res.status(200 || 201).send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -106,7 +106,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     })
     .then((user) => {
       if (!user) {
-        throw new ErrorNotFound('Пользователь не найден');
+        next(new ErrorNotFound('Пользователь не найден'));
       }
       res.status(200).send({ data: user });
     })
@@ -129,7 +129,7 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .then((user) => {
       if (!user) {
-        throw new ErrorNotFound('Пользователь не найден');
+        next(new ErrorNotFound('Пользователь не найден'));
       }
       res.status(200).send({ data: user });
     })
@@ -150,13 +150,13 @@ module.exports.login = (req, res, next) => {
   Users.findOne({ email }, '+password')
     .then((user) => {
       if (!user) {
-        throw new Unauthorized('Не правильный логин или пароль');
+        next(new Unauthorized('Не правильный логин или пароль'));
       }
       return bcrypt.compare(password, user.password);
     })
     .then((isValid) => {
       if (!isValid) {
-        throw new Unauthorized('Не правильный логин или пароль');
+        next(new Unauthorized('Не правильный логин или пароль'));
       }
       const token = jwt.sign({ email }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ jwt: token });
