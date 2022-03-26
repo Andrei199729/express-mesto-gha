@@ -32,8 +32,8 @@ app.use(auth);
 
 app.use(errors());
 
-app.use(errorHandler);
-
 app.use(routerErrorWay);
+
+app.use(errorHandler);
 
 app.listen(PORT);

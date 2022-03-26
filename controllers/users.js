@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const Users = require('../models/user');
 const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorConflict = require('../errors/ErrorConflict');
-const Unauthorized = require('../errors/Unauthorized');
+const ValidationError = require('../errors/ValidationError');
 
 module.exports.getUser = (req, res, next) => {
   Users.find({})
@@ -92,9 +92,12 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(409).send({ message: err.errorMessage });
+        next(new ErrorConflict('Переданы некорректные данные.'));
+      } else if (err.code === 11000) {
+        next(new ValidationError(`Данный email ${email}  уже существует`));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
@@ -150,20 +153,20 @@ module.exports.login = (req, res, next) => {
   Users.findOne({ email }, '+password')
     .then((user) => {
       if (!user) {
-        next(new Unauthorized('Не правильный логин или пароль'));
+        next(new ValidationError('Не правильный логин или пароль'));
       }
       return bcrypt.compare(password, user.password);
     })
     .then((isValid) => {
       if (!isValid) {
-        next(new Unauthorized('Не правильный логин или пароль'));
+        next(new ValidationError('Не правильный логин или пароль'));
       }
       const token = jwt.sign({ email }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ jwt: token });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(401).send({ message: err.errorMessage });
+        return res.status(400).send({ message: err.errorMessage });
       }
       return next(err);
     });
