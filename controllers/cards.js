@@ -1,5 +1,5 @@
 const ErrorNotFound = require('../errors/ErrorNotFound');
-const ValidationError = require('../errors/ValidationError');
+const BadRequestError = require('../errors/BadRequestError');
 const Cards = require('../models/card');
 
 module.exports.getCard = (req, res, next) => {
@@ -14,15 +14,15 @@ module.exports.createCard = (req, res, next) => {
   Cards.create({ name, link, owner: ownerId })
     .then((card) => {
       if (!card) {
-        next(new ValidationError('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.errorMessage });
+        next(new BadRequestError({ message: err.errorMessage }));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -43,12 +43,9 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError({ message: err.errorMessage }));
       }
-      if (err.statusCode === 404) {
-        return res.status(404).send({ message: err.errorMessage });
-      }
-      return next(err);
+      next(err);
     });
 };
 
@@ -65,12 +62,9 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError({ message: 'Переданы некорректные данные' }));
       }
-      if (err.statusCode === 404) {
-        return res.status(404).send({ message: err.errorMessage });
-      }
-      return next(err);
+      next(err);
     });
 };
 
@@ -87,11 +81,8 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError({ message: 'Переданы некорректные данные' }));
       }
-      if (err.statusCode === 404) {
-        return res.status(404).send({ message: err.errorMessage });
-      }
-      return next(err);
+      next(err);
     });
 };
