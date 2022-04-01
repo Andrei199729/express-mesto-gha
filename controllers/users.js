@@ -16,7 +16,7 @@ module.exports.getUserMe = (req, res, next) => {
   Users.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return next(new ErrorNotFound('Пользователь не найден'));
+        next(new ErrorNotFound('Пользователь не найден'));
       }
       res.status(200).send(user);
     })
