@@ -30,9 +30,9 @@ app.use('/cards', require('./routes/cards'));
 
 app.use(auth);
 
-app.use(errors());
-
 app.use(routerErrorWay);
+
+app.use(errors());
 
 app.use(errorHandler);
 
