@@ -74,10 +74,11 @@ module.exports.deleteCard = (req, res, next) => {
       throw new ErrorNotFound('Карточка не найдена');
     })
     .then((card) => {
+      console.log(card)
       if (!card) {
         next(new ErrorNotFound('Карточка не найдена'));
       }
-      res.status(200).send({ data: card });
+      res.status(200).send({ data: card, message: 'Карточка удалена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
