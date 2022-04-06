@@ -6,15 +6,16 @@ const routerErrorWay = require('./routes/errorsway');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
-const {
-  registerValid,
-  loginValid,
-} = require('./middlewares/validationJoi');
+const { registerValid, loginValid } = require('./middlewares/validationJoi');
+const { requestLogger, errorLoger } = require('./middlewares/logger');
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+app.use(requestLogger);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -22,11 +23,11 @@ app.post('/signup', registerValid, createUser);
 app.post('/signin', loginValid, login);
 
 // подключаемся к серверу mongo
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-});
+mongoose.connect('mongodb://localhost:27017/mestodb', { useNewUrlParser: true });
 
 app.use('/cards', require('./routes/cards'));
+
+app.use(errorLoger);
 
 app.use(auth);
 
