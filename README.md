@@ -2,7 +2,7 @@
 
 ## Описание
 
-Бекенд проекта Mesto
+* Бекенд проекта Mesto
 
 ## Применяемые технологии
-ExpressJs, MongoDB, Postman
+* ExpressJs, MongoDB, Postman
